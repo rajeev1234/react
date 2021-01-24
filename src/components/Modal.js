@@ -29,8 +29,8 @@ import React, { Component } from "react";
       render() {
         const { toggle, onSave } = this.props;
         return (
-          <Modal isOpen={true} toggle={toggle}>
-            <ModalHeader toggle={toggle}> Todo Item </ModalHeader>
+          <Modal isOpen={true}>
+            <ModalHeader> Todo Item </ModalHeader>
             <ModalBody>
               <Form>
                 <FormGroup>

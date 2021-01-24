@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Countries from 'countries-api';
 import './App.css';
 import Pagination from './components/Pagination';
 import Card from './components/Card';
@@ -8,12 +7,10 @@ class App extends Component {
   state = { allCountries: [], currentCountries: [], currentPage: null, totalPages: null,sortRating:"rating" }
 
   componentDidMount() {
-    // const { data: allCountries = [] } = Countries.findAll();
     axios
         .get("https://barclaytest123.herokuapp.com/api/todos/")
         .then(res => this.setState({ currentCountries: res.data.results,totalCountries: res.data.count,totalPages: parseInt((res.data.count) / 100 + 1) }))
         .catch(err => console.log(err));
-    // this.setState({ allCountries });
 
   }
   search(e,label){

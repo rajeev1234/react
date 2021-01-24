@@ -4,32 +4,17 @@ import  { Redirect } from 'react-router-dom'
 // import { browserHistory } from 'react-router-dom';
 import { Link } from 'react-router';
 import axios from "axios";
-export default class Card extends Component {
+export default class CardItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
     };
-    this.payPage = this.payPage.bind(this)
   }
-  payPage(){
-    console.log('re')
-    axios.post('https://barclaytest123.herokuapp.com/cart/', JSON.stringify({
-            product: this.props.book.id,
-            cart : "xx"
-          }))
-          .then(function (response) {
-              console.log(response)
-          }.bind(this))
-          .catch(function (error) {
-            console.log(error);
-          }.bind(this));
-    window.location.replace(`pay`)
-    // return <Link to="/Pay"></Link>
-  }
+
 
 render(){
   const {
-        title= null, authors = null,rating = null,price=  null
+        id= null, product = null,rating = null,price_ht=  null
       } = this.props.book || {}
   return (
     <div className="col-sm-6 col-md-4 country-card">
@@ -46,10 +31,9 @@ render(){
         />
         </div>
         <div className="px-3">
-          <span className="country-name text-dark d-block font-weight-bold">{ title }</span>
-          <span className="country-region text-secondary text-uppercase">{ authors }</span><br />
-          <span className="text-secondary text-uppercase font-weight-bold"> Rs. <font style={{color:"gold"}}>{ price }</font></span><br />
-          <button type="button" onClick={this.payPage} className="btn btn-success" style={{width:"100%"}}>Add to cart</button>
+          <span className="country-name text-dark d-block font-weight-bold">{ product }</span>
+          <span className="text-secondary text-uppercase font-weight-bold"> Rs. <font style={{color:"gold"}}>{ price_ht }</font></span><br />
+          <button type="button" className="btn btn-success" style={{width:"100%"}}>Pay</button>
         </div>
       </div>
     </div>
