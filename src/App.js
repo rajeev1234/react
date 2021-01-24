@@ -10,7 +10,7 @@ class App extends Component {
   componentDidMount() {
     // const { data: allCountries = [] } = Countries.findAll();
     axios
-        .get("http://localhost:8000/api/todos/")
+        .get("https://barclaytest123.herokuapp.com/api/todos/")
         .then(res => this.setState({ currentCountries: res.data.results,totalCountries: res.data.count,totalPages: parseInt((res.data.count) / 100 + 1) }))
         .catch(err => console.log(err));
     // this.setState({ allCountries });
@@ -33,7 +33,7 @@ class App extends Component {
     }
     console.log('search',e.target.value)
     axios
-        .get(`http://localhost:8000/api/todos/?search=${searchValue}&ordering=${sort}`)
+        .get(`https://barclaytest123.herokuapp.com/api/todos/?search=${searchValue}&ordering=${sort}`)
         .then(res => this.setState({ currentCountries: res.data.results,totalCountries: res.data.count,totalPages: parseInt((res.data.count) / 100 + 1) }))
         .catch(err => console.log(err));
   }
@@ -45,7 +45,7 @@ class App extends Component {
     const totalPages = this.state.totalPages
     this.setState({ currentPage,currentCountries, totalPages});
     axios
-        .get(`http://localhost:8000/api/todos/?page=${currentPage}`)
+        .get(`https://barclaytest123.herokuapp.com/api/todos/?page=${currentPage}`)
         .then(res => this.setState({ currentCountries: res.data.results,totalCountries: res.data.count,totalPages: parseInt((res.data.count) / 100 + 1) }))
         .catch(err => console.log(err));
   }
