@@ -1,87 +1,228 @@
 import React, { Component } from 'react';
-import './App.css';
-import Pagination from './components/Pagination';
-import Card from './components/Card';
+import ReactTable from "react-table-6";
+// import Select from 'react-select';
+import "react-table-6/react-table.css";
+import Input from '@material-ui/core/Input';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import FilledInput from '@material-ui/core/FilledInput';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 import axios from "axios";
+import TextField from '@material-ui/core/TextField';
+import $ from 'jquery';
+
+
+const data = [
+  {name: "rajeev", id: "1"},
+  {name:"nepal", id : "2"}
+]
+
+const options = [
+  { value: 'SLC', label: 'SLC' },
+  { value: 'ME', label: 'ME' },
+  { value: 'BE', label: 'BE' },
+];
 class App extends Component {
-  state = { allCountries: [], currentCountries: [], currentPage: null, totalPages: null,sortRating:"rating" }
+  constructor(props) {
+  super(props);
+  this.state = {
+    selectedOption: null,
+    qualificationList:[],
+    employeeList:[],
+    salary:""
+  }
+  this.handleChange = this.handleChange.bind(this)
+  this.onChangeValue = this.onChangeValue.bind(this)
+  this.qualificationList = this.qualificationList.bind(this)
+  this.employeeList = this.employeeList.bind(this)
+  this.handleChangeSalary = this.handleChangeSalary.bind(this)
+}
+
 
   componentDidMount() {
-    axios
-        .get("https://barclaytest123.herokuapp.com/api/todos/")
-        .then(res => this.setState({ currentCountries: res.data.results,totalCountries: res.data.count,totalPages: parseInt((res.data.count) / 100 + 1) }))
-        .catch(err => console.log(err));
+    console.log("testing")
+    this.qualificationList()
+    this.employeeList()
+    this.setState({
+      test:"test"
+    })
+
+
 
   }
-  search(e,label){
-    if(label == "search"){
-      console.log('search')
-      var searchValue = e.target.value
-      var sort = ""
-    }
-    else{
-      console.log('sort')
-      var sort=this.state.sortRating
-      var searchValue = ""
-      this.setState({
-        sortRating: (sort == "rating") ? "-rating" : (sort == "-rating") ? "rating" : "rating"
-      })
-      
-    }
-    console.log('search',e.target.value)
-    axios
-        .get(`https://barclaytest123.herokuapp.com/api/todos/?search=${searchValue}&ordering=${sort}`)
-        .then(res => this.setState({ currentCountries: res.data.results,totalCountries: res.data.count,totalPages: parseInt((res.data.count) / 100 + 1) }))
-        .catch(err => console.log(err));
+  handleChangeSalary(e){
+    this.setState({
+      salary: e.target.value
+    })
   }
-  onPageChanged = data => {
-    const { allCountries } = this.state;
-    const { currentPage, pageLimit } = data;
-    const offset = (currentPage - 1) * pageLimit;
-    const currentCountries = this.state.currentCountries
-    const totalPages = this.state.totalPages
-    this.setState({ currentPage,currentCountries, totalPages});
-    axios
-        .get(`https://barclaytest123.herokuapp.com/api/todos/?page=${currentPage}`)
-        .then(res => this.setState({ currentCountries: res.data.results,totalCountries: res.data.count,totalPages: parseInt((res.data.count) / 100 + 1) }))
-        .catch(err => console.log(err));
+  qualificationList(){
+    $.ajax({
+      url: 'http://127.0.0.1:8000/qualificationNameList/',
+      dataType: 'json',
+      type: 'GET',
+      cache: false,
+      success: function(data) {
+        console.log('asdfasfd',data.qualificationList)
+        this.setState({
+          qualificationList: data.qualificationList
+        })
+      }.bind(this),
+      error: function(xhr, status, err) {
+      console.log('adf',err)
+      }.bind(this)
+    });
+
   }
+  employeeList(){
+    $.ajax({
+      url: 'http://127.0.0.1:8000/employeeList/',
+      dataType: 'json',
+      type: 'GET',
+      cache: false,
+      success: function(data) {
+        console.log('asdfasfd',data)
+        this.setState({
+          employeeList: data.employee
+        })
+      }.bind(this),
+      error: function(xhr, status, err) {
+      console.log('adf',err)
+      }.bind(this)
+    });
+  }
+  onChangeValue(e){
+    console.log(e.target.value)
+  }
+  handleChange(selectedOption){
+    // this.setState({ selectedOption });
+    console.log(`Option selected:`, selectedOption);
+  };
+    
   render() {
-    const { allCountries, currentCountries, currentPage, totalPages,totalCountries } = this.state;
-    console.log('allCountries',allCountries)
-    console.log('currentCountries',currentCountries)
-    console.log('currentPage',currentPage)
-    console.log('totalCountries',totalCountries)
-    // const totalCountries = this.state.totalCountries
-
-    if (totalCountries === 0 || totalCountries === undefined) return null;
-
-    const headerClass = ['text-dark py-2 pr-4 m-0', currentPage ? 'border-gray border-right' : ''].join(' ').trim();
-
+console.log(this.state.value)
     return (
-      <div className="container mb-5">
-        <div className="row d-flex flex-row py-5">
-          <div className="w-100 px-4 py-5 d-flex flex-row flex-wrap align-items-center justify-content-between">
-            <div className="d-flex flex-row align-items-center">
-              <h2 className={headerClass}>
-                <strong className="text-secondary">{totalCountries}</strong> Books
-              </h2>
-              { currentPage && (
-                <span className="current-page d-inline-block h-100 pl-4 text-secondary">
-                  Page <span className="font-weight-bold">{ currentPage }</span> / <span className="font-weight-bold">{ totalPages }</span>
-                </span>
-              ) }
-            </div>
-            <div className="d-flex flex-row py-4 align-items-center">
-              <Pagination totalRecords={totalCountries} pageLimit={100} pageNeighbours={1} onPageChanged={this.onPageChanged} />
-            </div>
-            <input onChange={(e) => this.search(e,'search')} className="form-control form-control-lg" type="text" placeholder="Search..."></input>
-            <hr style={{backgroundColor:"white", width:"100%"}}></hr>
-            <button type="button" onClick={(e) => this.search(e,'sort')} className="btn btn-warning">Sort by rating</button>
+      <div style={{margin:"7% 2% 2% 2%"}}>
+      <div style={{display:"flex", flexDirection:"row", justifyContent:"start"}}>
+        <div>
+              <ReactTable
+              data={this.state.employeeList}
+              columns={[
+                  {
+                    Header: "Employee Id",
+                    accessor: "id",
+                    sortable: false,
+                    width: 100,
+                  },
+                  {
+                    Header: "Name",
+                    accessor: "name",
+                    width: 120,
+                  },
+                 
+              ]}
+              style={{backgroundColor: "white"}}
+              showPageSizeOptions={false}
+              showPageJump={false}
+              />
+              </div >
+              <div style={{marginLeft:"5%"}}>
+              <div style={{display:"flex", flexDirection:"row"}}>
+                Name*
+                <input style={{marginLeft:"3%", width:"1000px"}} value={this.state.value} placeholder="Name" 	onChange={e => {
+					let value = e.target.value;
+
+					value = value.replace(/[^A-Za-z]/gi, "");
+
+					this.setState({
+						value
+					});
+				}}></input>
+              </div>
+              <div style={{display:"flex", flexDirection:"row", marginTop:"3%"}}>
+                Gender
+                <div onChange={this.onChangeValue} style={{marginLeft:"5%"}}>
+                  <input type="radio" value="Male" name="gender" /> Male
+                  <input type="radio" value="Female" name="gender" /> Female
+                  <input type="radio" value="Other" name="gender" /> Other
+                </div>              
+                </div>
+              <div style={{display:"flex", flexDirection:"row", marginTop:"3%"}}>
+                DOB* &nbsp;
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                &nbsp;
+
+                {/* <input style={{marginLeft:"3%", width:"1000px"}}></input> */}
+                <TextField
+        id="date"
+        // label="Birthday"
+        type="date"
+        // defaultValue="2017-05-24"
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+              </div>
+              <div style={{display:"flex", flexDirection:"row", marginTop:"3%"}}>
+                Salary
+                <input type="number" style={{marginLeft:"3%", width:"1000px"}} value={this.state.salary} onChange={this.handleChangeSalary}></input>
+              </div>
+              <div style={{backgroundColor:"#dfc8c8",marginTop:"10%", width:"1070px", height:"500px", color:"black"}}>
+                <div style={{margin:"3%", fontSize:"30px"}}>
+                    Employee Qualification
+                </div>
+
+                <div style={{display:"flex", flexDirection:"row", justifyContent:"space-evenly"}}>
+                  Qualification 
+                  <select
+                    value={this.state.selectedOption}
+                    onChange={this.handleChange}
+                  >
+                  <option value="SLC">SLC</option>
+                  <option value="INTERMEDIATE">INTERMETIATE</option>
+                  <option value="BE">BE</option>
+                  <option value="ME">ME</option>
+                  </select>
+                  <p>Marks</p>
+                  <input></input>
+                  <button>Add</button>
+                </div>
+                <div style={{marginTop:"2%"}}>
+                <ReactTable
+                  data={data}
+                  columns={[
+                  {
+                    Header: "QID",
+                    accessor: "id",
+                    sortable: true,
+                  },
+                  {
+                    Header: "Qualification Name",
+                    accessor: "name",
+                  },
+                  {
+                    Header: "Marks",
+                    accessor: "name",
+                  }
+                 
+              ]}
+              style={{backgroundColor: "white"}}
+              showPageSizeOptions={false}
+              showPageJump={false}
+              pageSize={5}
+
+              />
+              </div>
+              </div>
+              </div>
+              
           </div>
-          { currentCountries.map(country => <Card key={country.id} book={country} />) }
-        </div>
-      </div>
+          
+          </div>
     );
   }
 }
